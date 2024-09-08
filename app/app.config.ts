@@ -17,13 +17,13 @@ import AfterGameRoom from "./rooms/after-game-room"
 import CustomLobbyRoom from "./rooms/custom-lobby-room"
 import GameRoom from "./rooms/game-room"
 import PreparationRoom from "./rooms/preparation-room"
+import { getLeaderboard } from "./services/leaderboard"
 import { Title } from "./types"
 import { SynergyTriggers } from "./types/Config"
 import { DungeonPMDO } from "./types/enum/Dungeon"
 import { Item } from "./types/enum/Item"
 import { Pkm, PkmIndex } from "./types/enum/Pokemon"
 import { logger } from "./utils/logger"
-import { getLeaderboard } from "./services/leaderboard"
 
 const clientSrc = __dirname.includes("server")
   ? path.join(__dirname, "..", "..", "client")
@@ -211,7 +211,10 @@ export default config({
     /**
      * Before before gameServer.listen() is called.
      */
-    connect(process.env.MONGO_URI!)
+    connect(process.env.MONGO_URI!, {
+      maxPoolSize: 100,
+      socketTimeoutMS: 45000
+    })
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID!,
